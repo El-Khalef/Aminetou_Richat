@@ -31,14 +31,14 @@ export function Navigation() {
                   Notifications
                 </Link>
                 <Link
-                  href="/add-funding"
+                  href="/financements"
                   className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    isActive("/add-funding")
+                    isActive("/financements")
                       ? "text-primary bg-accent"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                   }`}
                 >
-                  Ajouter financement
+                  Financements
                 </Link>
                 <Link
                   href="/dossiers"
