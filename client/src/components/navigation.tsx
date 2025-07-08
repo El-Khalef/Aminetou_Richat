@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Search, Bell, User } from "lucide-react";
+import { Search, User } from "lucide-react";
 
 export function Navigation() {
   const [location] = useLocation();
@@ -28,7 +28,7 @@ export function Navigation() {
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                   }`}
                 >
-                  Tableau de bord
+                  Notifications
                 </Link>
                 <Link
                   href="/add-funding"
@@ -54,10 +54,6 @@ export function Navigation() {
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm">
-              <Bell className="inline mr-2 h-4 w-4" />
-              Notifications
-            </button>
             <div className="relative">
               <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
                 <User className="h-4 w-4 text-muted-foreground" />
