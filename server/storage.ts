@@ -1,4 +1,20 @@
-import { fundingOpportunities, users, type User, type InsertUser, type FundingOpportunity, type InsertFundingOpportunity } from "@shared/schema";
+import { 
+  fundingOpportunities, 
+  users, 
+  clients, 
+  applications, 
+  documents,
+  type User, 
+  type InsertUser, 
+  type FundingOpportunity, 
+  type InsertFundingOpportunity,
+  type Client,
+  type InsertClient,
+  type Application,
+  type InsertApplication,
+  type Document,
+  type InsertDocument 
+} from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gte, lte, sql, desc, asc } from "drizzle-orm";
 
@@ -29,6 +45,34 @@ export interface IStorage {
     totalAmount: number;
     thisWeek: number;
   }>;
+
+  // Applications (dossiers)
+  getApplications(): Promise<Array<{
+    id: number;
+    client: Client;
+    fundingOpportunity: FundingOpportunity;
+    status: string;
+    submissionDate: string;
+    assignedConsultant?: string;
+    completionScore: number;
+    notes?: string;
+    documents: Document[];
+  }>>;
+  getApplication(id: number): Promise<Application | undefined>;
+  createApplication(application: InsertApplication): Promise<Application>;
+  updateApplication(id: number, application: Partial<InsertApplication>): Promise<Application>;
+  deleteApplication(id: number): Promise<void>;
+
+  // Clients
+  getClients(): Promise<Client[]>;
+  getClient(id: number): Promise<Client | undefined>;
+  createClient(client: InsertClient): Promise<Client>;
+  updateClient(id: number, client: Partial<InsertClient>): Promise<Client>;
+
+  // Documents
+  getDocumentsByApplication(applicationId: number): Promise<Document[]>;
+  createDocument(document: InsertDocument): Promise<Document>;
+  deleteDocument(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -184,6 +228,331 @@ export class DatabaseStorage implements IStorage {
       totalAmount: totalAmount?.sum || 0,
       thisWeek: thisWeekCount?.count || 0,
     };
+  }
+
+  // Applications (dossiers)
+  async getApplications(): Promise<Array<{
+    id: number;
+    client: Client;
+    fundingOpportunity: FundingOpportunity;
+    status: string;
+    submissionDate: string;
+    assignedConsultant?: string;
+    completionScore: number;
+    notes?: string;
+    documents: Document[];
+  }>> {
+    // Retourner des données exemple pour l'instant
+    return [
+      {
+        id: 1,
+        client: {
+          id: 1,
+          organizationName: "Association Verte Mauritanie",
+          contactPerson: "Aminata Sow",
+          email: "aminata@vertmauritanie.org",
+          phone: "+222 45 67 89 01",
+          address: "Nouakchott, Mauritanie",
+          legalStatus: "Association",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        fundingOpportunity: {
+          id: 8,
+          title: "GCF - Simplified Approval Process",
+          fundingProgram: "Guichet permanent du GCF",
+          description: "Processus d'approbation simplifié du GCF",
+          eligibilityCriteria: "Organisations locales",
+          requiredDocuments: "Statuts, budget, plan d'affaires",
+          externalLink: null,
+          minAmount: 10000,
+          maxAmount: 10000000,
+          fundingType: "Don",
+          status: "Ouvert",
+          sectors: ["Environnement", "Climat"],
+          deadline: "Aucune - Ouvert en continu",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        status: "En cours",
+        submissionDate: "2025-01-05T10:00:00Z",
+        assignedConsultant: undefined,
+        completionScore: 65,
+        notes: "Dossier en cours de finalisation",
+        documents: [
+          {
+            id: 1,
+            applicationId: 1,
+            documentType: "Statuts juridiques",
+            fileName: "statuts_association.pdf",
+            fileSize: 245000,
+            fileType: "pdf",
+            uploadDate: new Date(),
+            isRequired: true,
+            status: "Soumis",
+            createdAt: new Date(),
+          },
+          {
+            id: 2,
+            applicationId: 1,
+            documentType: "Budget prévisionnel",
+            fileName: "budget_previsionnel_2025.xlsx",
+            fileSize: 89000,
+            fileType: "xlsx",
+            uploadDate: new Date(),
+            isRequired: true,
+            status: "Soumis",
+            createdAt: new Date(),
+          },
+          {
+            id: 3,
+            applicationId: 1,
+            documentType: "Plan d'affaires",
+            fileName: "business_plan_mauritanie.pdf",
+            fileSize: 1200000,
+            fileType: "pdf",
+            uploadDate: new Date(),
+            isRequired: true,
+            status: "Soumis",
+            createdAt: new Date(),
+          },
+        ],
+      },
+      {
+        id: 2,
+        client: {
+          id: 2,
+          organizationName: "Coopérative des Pêcheurs",
+          contactPerson: "Mohamed Vall",
+          email: "m.vall@pecheurs.mr",
+          phone: "+222 36 78 90 12",
+          address: "Nouadhibou, Mauritanie",
+          legalStatus: "Coopérative",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        fundingOpportunity: {
+          id: 9,
+          title: "GEF - Least Developed Countries Fund",
+          fundingProgram: "Fonds GEF",
+          description: "Fonds pour les pays les moins avancés",
+          eligibilityCriteria: "Pays moins avancés",
+          requiredDocuments: "Documents complets requis",
+          externalLink: null,
+          minAmount: 5000,
+          maxAmount: 50000000,
+          fundingType: "Don",
+          status: "Ouvert",
+          sectors: ["Environnement", "Développement"],
+          deadline: "Soumissions continues - Council 2 fois/an",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        status: "Prêt",
+        submissionDate: "2025-01-03T14:30:00Z",
+        assignedConsultant: "Dr. Fatima Bint",
+        completionScore: 95,
+        notes: "Dossier complet, prêt pour soumission",
+        documents: [
+          {
+            id: 4,
+            applicationId: 2,
+            documentType: "Statuts juridiques",
+            fileName: "statuts_cooperative.pdf",
+            fileSize: 180000,
+            fileType: "pdf",
+            uploadDate: new Date(),
+            isRequired: true,
+            status: "Soumis",
+            createdAt: new Date(),
+          },
+          {
+            id: 5,
+            applicationId: 2,
+            documentType: "Budget prévisionnel",
+            fileName: "budget_2025_peche.xlsx",
+            fileSize: 95000,
+            fileType: "xlsx",
+            uploadDate: new Date(),
+            isRequired: true,
+            status: "Soumis",
+            createdAt: new Date(),
+          },
+          {
+            id: 6,
+            applicationId: 2,
+            documentType: "Plan d'affaires",
+            fileName: "plan_affaires_peche.pdf",
+            fileSize: 890000,
+            fileType: "pdf",
+            uploadDate: new Date(),
+            isRequired: true,
+            status: "Soumis",
+            createdAt: new Date(),
+          },
+          {
+            id: 7,
+            applicationId: 2,
+            documentType: "Preuves de cofinancement",
+            fileName: "cofinancement_banque.pdf",
+            fileSize: 340000,
+            fileType: "pdf",
+            uploadDate: new Date(),
+            isRequired: true,
+            status: "Soumis",
+            createdAt: new Date(),
+          },
+          {
+            id: 8,
+            applicationId: 2,
+            documentType: "Relevé d'identité bancaire",
+            fileName: "rib_cooperative.pdf",
+            fileSize: 125000,
+            fileType: "pdf",
+            uploadDate: new Date(),
+            isRequired: true,
+            status: "Soumis",
+            createdAt: new Date(),
+          },
+        ],
+      },
+      {
+        id: 3,
+        client: {
+          id: 3,
+          organizationName: "Initiative Jeunesse Climat",
+          contactPerson: "Aicha Mint Ahmed",
+          email: "aicha@jeunesseClimat.mr",
+          phone: "+222 22 33 44 55",
+          address: "Rosso, Mauritanie",
+          legalStatus: "ONG",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        fundingOpportunity: {
+          id: 10,
+          title: "CIF - Climate Investment Funds",
+          fundingProgram: "Programme CIF",
+          description: "Fonds d'investissement climatique",
+          eligibilityCriteria: "Projets climatiques",
+          requiredDocuments: "Documentation technique requise",
+          externalLink: null,
+          minAmount: 1000000,
+          maxAmount: 500000000,
+          fundingType: "Prêt",
+          status: "Ouvert",
+          sectors: ["Climat", "Énergie"],
+          deadline: "Approche programmatique",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        status: "En cours",
+        submissionDate: "2025-01-07T09:15:00Z",
+        assignedConsultant: undefined,
+        completionScore: 35,
+        notes: "Plusieurs documents manquants",
+        documents: [
+          {
+            id: 9,
+            applicationId: 3,
+            documentType: "Plan d'affaires",
+            fileName: "plan_jeunesse_climat.pdf",
+            fileSize: 650000,
+            fileType: "pdf",
+            uploadDate: new Date(),
+            isRequired: true,
+            status: "Soumis",
+            createdAt: new Date(),
+          },
+          {
+            id: 10,
+            applicationId: 3,
+            documentType: "Identité du représentant légal",
+            fileName: "cni_aicha.pdf",
+            fileSize: 210000,
+            fileType: "pdf",
+            uploadDate: new Date(),
+            isRequired: true,
+            status: "Soumis",
+            createdAt: new Date(),
+          },
+        ],
+      },
+    ];
+  }
+
+  async getApplication(id: number): Promise<Application | undefined> {
+    // Méthode exemple
+    return undefined;
+  }
+
+  async createApplication(application: InsertApplication): Promise<Application> {
+    const [newApplication] = await db
+      .insert(applications)
+      .values(application)
+      .returning();
+    return newApplication;
+  }
+
+  async updateApplication(id: number, application: Partial<InsertApplication>): Promise<Application> {
+    const [updatedApplication] = await db
+      .update(applications)
+      .set({ ...application, updatedAt: new Date() })
+      .where(eq(applications.id, id))
+      .returning();
+    return updatedApplication;
+  }
+
+  async deleteApplication(id: number): Promise<void> {
+    await db.delete(applications).where(eq(applications.id, id));
+  }
+
+  // Clients
+  async getClients(): Promise<Client[]> {
+    return await db.select().from(clients).orderBy(asc(clients.organizationName));
+  }
+
+  async getClient(id: number): Promise<Client | undefined> {
+    const [client] = await db.select().from(clients).where(eq(clients.id, id));
+    return client || undefined;
+  }
+
+  async createClient(client: InsertClient): Promise<Client> {
+    const [newClient] = await db
+      .insert(clients)
+      .values(client)
+      .returning();
+    return newClient;
+  }
+
+  async updateClient(id: number, client: Partial<InsertClient>): Promise<Client> {
+    const [updatedClient] = await db
+      .update(clients)
+      .set({ ...client, updatedAt: new Date() })
+      .where(eq(clients.id, id))
+      .returning();
+    return updatedClient;
+  }
+
+  // Documents
+  async getDocumentsByApplication(applicationId: number): Promise<Document[]> {
+    return await db
+      .select()
+      .from(documents)
+      .where(eq(documents.applicationId, applicationId))
+      .orderBy(asc(documents.documentType));
+  }
+
+  async createDocument(document: InsertDocument): Promise<Document> {
+    const [newDocument] = await db
+      .insert(documents)
+      .values(document)
+      .returning();
+    return newDocument;
+  }
+
+  async deleteDocument(id: number): Promise<void> {
+    await db.delete(documents).where(eq(documents.id, id));
   }
 }
 
