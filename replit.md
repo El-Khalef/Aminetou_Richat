@@ -1,4 +1,4 @@
-# Mauritanie Funding Tracker
+# Richat Funding Tracker
 
 ## Overview
 

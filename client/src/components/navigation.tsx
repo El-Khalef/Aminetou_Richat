@@ -14,7 +14,7 @@ export function Navigation() {
             <div className="flex-shrink-0">
               <h1 className="text-xl font-bold text-foreground">
                 <Search className="inline mr-3 h-5 w-5 text-primary" />
-                <span className="text-primary">Mauritanie</span>
+                <span className="text-primary">Richat</span>
                 <span className="text-muted-foreground ml-1">Funding Tracker</span>
               </h1>
             </div>
