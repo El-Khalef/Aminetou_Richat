@@ -31,14 +31,24 @@ export function Navigation() {
                   Tableau de bord
                 </Link>
                 <Link
-                  href="/add-funding"
+                  href="/financement"
                   className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    isActive("/add-funding")
+                    isActive("/financement")
                       ? "text-primary bg-accent"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                   }`}
                 >
-                  Ajouter un appel
+                  Financement
+                </Link>
+                <Link
+                  href="/dossier"
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    isActive("/dossier")
+                      ? "text-primary bg-accent"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  }`}
+                >
+                  Dossier
                 </Link>
               </div>
             </div>
