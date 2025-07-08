@@ -48,7 +48,7 @@ export function Navigation() {
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                   }`}
                 >
-                  Dossier
+                  À définir
                 </Link>
               </div>
             </div>
