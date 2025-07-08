@@ -41,9 +41,9 @@ export function SearchAndFilters({ onFiltersChange }: SearchAndFiltersProps) {
   const clearFilters = () => {
     const clearedFilters = {
       searchTerm: "",
-      fundingType: "",
-      region: "",
-      fonds: "",
+      fundingType: "all",
+      region: "all",
+      fonds: "all",
       sortBy: "deadline",
       viewMode: filters.viewMode
     };
@@ -76,10 +76,11 @@ export function SearchAndFilters({ onFiltersChange }: SearchAndFiltersProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tous les types</SelectItem>
-                <SelectItem value="Don">Don</SelectItem>
-                <SelectItem value="Subvention">Subvention</SelectItem>
-                <SelectItem value="Prêt">Prêt</SelectItem>
-                <SelectItem value="Mixte">Mixte</SelectItem>
+                <SelectItem value="Subvention">Subventions</SelectItem>
+                <SelectItem value="prêt">Prêts</SelectItem>
+                <SelectItem value="garantie">Garanties</SelectItem>
+                <SelectItem value="capitaux">Capitaux propres</SelectItem>
+                <SelectItem value="concessionnels">Prêts concessionnels</SelectItem>
               </SelectContent>
             </Select>
 
@@ -104,9 +105,10 @@ export function SearchAndFilters({ onFiltersChange }: SearchAndFiltersProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tous les fonds</SelectItem>
-                <SelectItem value="GCF">Guichet permanent du GCF</SelectItem>
+                <SelectItem value="GCF">Fonds GCF</SelectItem>
                 <SelectItem value="GEF">Fonds GEF</SelectItem>
                 <SelectItem value="CIF">Programme CIF</SelectItem>
+                <SelectItem value="MAF">Mitigation Action Facility</SelectItem>
               </SelectContent>
             </Select>
 

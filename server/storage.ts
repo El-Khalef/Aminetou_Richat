@@ -111,8 +111,8 @@ export class DatabaseStorage implements IStorage {
       conditions.push(sql`${filters.sector} = ANY(${fundingOpportunities.sectors})`);
     }
     
-    if (filters?.fundingType) {
-      conditions.push(eq(fundingOpportunities.fundingType, filters.fundingType));
+    if (filters?.fundingType && filters.fundingType !== 'all') {
+      conditions.push(sql`${fundingOpportunities.fundingType} ILIKE ${'%' + filters.fundingType + '%'}`);
     }
     
     if (filters?.status) {
@@ -131,14 +131,26 @@ export class DatabaseStorage implements IStorage {
       conditions.push(sql`${fundingOpportunities.deadline} ILIKE ${'%' + filters.deadline + '%'}`);
     }
     
-    // Filtre par terme de recherche
+    // Filtre par terme de recherche (titre, description, program)
     if (filters?.searchTerm) {
-      conditions.push(sql`${fundingOpportunities.title} ILIKE ${'%' + filters.searchTerm + '%'}`);
+      conditions.push(sql`(
+        ${fundingOpportunities.title} ILIKE ${'%' + filters.searchTerm + '%'} OR
+        ${fundingOpportunities.description} ILIKE ${'%' + filters.searchTerm + '%'} OR
+        ${fundingOpportunities.fundingProgram} ILIKE ${'%' + filters.searchTerm + '%'}
+      )`);
     }
     
     // Filtre par fonds (funding_program)
     if (filters?.fonds && filters.fonds !== 'all') {
-      conditions.push(sql`${fundingOpportunities.fundingProgram} ILIKE ${'%' + filters.fonds + '%'}`);
+      let fondPattern = filters.fonds;
+      if (filters.fonds === 'GCF') {
+        fondPattern = 'GCF';
+      } else if (filters.fonds === 'GEF') {
+        fondPattern = 'GEF';
+      } else if (filters.fonds === 'CIF') {
+        fondPattern = 'CIF';
+      }
+      conditions.push(sql`${fundingOpportunities.fundingProgram} ILIKE ${'%' + fondPattern + '%'}`);
     }
     
     let query = db.select().from(fundingOpportunities);
@@ -154,8 +166,12 @@ export class DatabaseStorage implements IStorage {
       return await query.orderBy(desc(fundingOpportunities.title));
     } else if (filters?.sortBy === 'deadline') {
       return await query.orderBy(asc(fundingOpportunities.deadline));
-    } else {
+    } else if (filters?.sortBy === 'amount') {
+      return await query.orderBy(desc(fundingOpportunities.maxAmount));
+    } else if (filters?.sortBy === 'recent') {
       return await query.orderBy(desc(fundingOpportunities.createdAt));
+    } else {
+      return await query.orderBy(asc(fundingOpportunities.deadline));
     }
   }
 
