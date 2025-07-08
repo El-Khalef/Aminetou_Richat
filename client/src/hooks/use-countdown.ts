@@ -23,7 +23,8 @@ export function useCountdown(deadline: string): CountdownData {
       // Ignorer les textes comme "Soumission continue", "Aucune date limite", etc.
       if (dateString.toLowerCase().includes('continue') || 
           dateString.toLowerCase().includes('aucune') ||
-          dateString.toLowerCase().includes('permanent')) {
+          dateString.toLowerCase().includes('permanent') ||
+          dateString.toLowerCase().includes('soumissions')) {
         return false;
       }
       

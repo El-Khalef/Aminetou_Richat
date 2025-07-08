@@ -51,7 +51,19 @@ export function FundingCard({ opportunity, onOpenModal, viewMode = "grid" }: Fun
 
   const formatDate = (date: string) => {
     if (!date) return "Date non spécifiée";
-    // Retourner le texte tel quel sans formater comme une date
+    
+    // Vérifier si c'est une date valide (format ISO)
+    const dateObj = new Date(date);
+    if (!isNaN(dateObj.getTime()) && date.includes('-')) {
+      // Formater avec le nom du mois
+      return dateObj.toLocaleDateString('fr-FR', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+    
+    // Retourner le texte tel quel pour les autres formats
     return date;
   };
 
