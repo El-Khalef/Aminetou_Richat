@@ -2,14 +2,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Euro, Tag, Eye, ExternalLink, Building2 } from "lucide-react";
-import { Link } from "wouter";
 import type { FundingOpportunity } from "@shared/schema";
 
 interface FundingCardProps {
   opportunity: FundingOpportunity;
+  onOpenModal: (opportunity: FundingOpportunity) => void;
 }
 
-export function FundingCard({ opportunity }: FundingCardProps) {
+export function FundingCard({ opportunity, onOpenModal }: FundingCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Ouvert":
@@ -101,11 +101,12 @@ export function FundingCard({ opportunity }: FundingCardProps) {
           </div>
 
           <div className="flex gap-3 pt-2">
-            <Button asChild className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-medium">
-              <Link href={`/funding/${opportunity.id}`}>
-                <Eye className="mr-2 h-4 w-4" />
-                Voir les détails
-              </Link>
+            <Button 
+              onClick={() => onOpenModal(opportunity)}
+              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              Voir les détails
             </Button>
             {opportunity.externalLink && (
               <Button variant="outline" size="icon" asChild className="border-border hover:bg-accent">

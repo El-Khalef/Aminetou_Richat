@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Dashboard from "@/pages/dashboard";
 import AddFunding from "@/pages/add-funding";
-import FundingDetail from "@/pages/funding-detail";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -13,7 +12,6 @@ function Router() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/add-funding" component={AddFunding} />
-      <Route path="/funding/:id" component={FundingDetail} />
       <Route component={NotFound} />
     </Switch>
   );

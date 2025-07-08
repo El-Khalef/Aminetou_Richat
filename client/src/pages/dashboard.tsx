@@ -4,6 +4,7 @@ import { Navigation } from "@/components/navigation";
 import { StatisticsCards } from "@/components/statistics-cards";
 import { FundingFilters, FilterValues } from "@/components/funding-filters";
 import { FundingCard } from "@/components/funding-card";
+import { FundingDetailModal } from "@/components/funding-detail-modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search } from "lucide-react";
@@ -11,6 +12,8 @@ import type { FundingOpportunity } from "@shared/schema";
 
 export default function Dashboard() {
   const [filters, setFilters] = useState<FilterValues>({});
+  const [selectedOpportunity, setSelectedOpportunity] = useState<FundingOpportunity | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: opportunities, isLoading } = useQuery<FundingOpportunity[]>({
     queryKey: ["/api/funding-opportunities", filters],
@@ -32,6 +35,16 @@ export default function Dashboard() {
 
   const handleFiltersChange = (newFilters: FilterValues) => {
     setFilters(newFilters);
+  };
+
+  const handleOpenModal = (opportunity: FundingOpportunity) => {
+    setSelectedOpportunity(opportunity);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedOpportunity(null);
   };
 
   return (
@@ -104,10 +117,16 @@ export default function Dashboard() {
             </div>
           ) : (
             opportunities?.map((opportunity) => (
-              <FundingCard key={opportunity.id} opportunity={opportunity} />
+              <FundingCard key={opportunity.id} opportunity={opportunity} onOpenModal={handleOpenModal} />
             ))
           )}
         </div>
+
+        <FundingDetailModal
+          opportunity={selectedOpportunity}
+          open={isModalOpen}
+          onClose={handleCloseModal}
+        />
 
         {opportunities && opportunities.length > 6 && (
           <div className="mt-8 flex items-center justify-center">

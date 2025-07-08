@@ -81,13 +81,13 @@ export class DatabaseStorage implements IStorage {
       conditions.push(lte(fundingOpportunities.deadline, filters.deadline));
     }
     
-    let query = db.select().from(fundingOpportunities);
+    const baseQuery = db.select().from(fundingOpportunities);
     
     if (conditions.length > 0) {
-      query = query.where(and(...conditions));
+      return await baseQuery.where(and(...conditions)).orderBy(desc(fundingOpportunities.createdAt));
     }
     
-    return await query.orderBy(desc(fundingOpportunities.createdAt));
+    return await baseQuery.orderBy(desc(fundingOpportunities.createdAt));
   }
 
   async getFundingOpportunity(id: number): Promise<FundingOpportunity | undefined> {
