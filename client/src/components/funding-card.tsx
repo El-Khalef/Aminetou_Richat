@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, DollarSign, Tag, Eye, ExternalLink } from "lucide-react";
+import { Calendar, Euro, Tag, Eye, ExternalLink, Building2 } from "lucide-react";
 import { Link } from "wouter";
 import type { FundingOpportunity } from "@shared/schema";
 
@@ -50,59 +50,71 @@ export function FundingCard({ opportunity }: FundingCardProps) {
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="card-shadow hover:card-shadow-hover transition-all duration-300 border-0 group">
       <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">{opportunity.title}</h3>
-            <p className="text-sm text-gray-600">{opportunity.fundingProgram}</p>
-          </div>
-          <Badge className={getStatusColor(opportunity.status)}>
-            {opportunity.status}
-          </Badge>
-        </div>
-
-        <div className="space-y-3 mb-4">
-          <div className="flex items-center text-sm text-gray-600">
-            <Calendar className="mr-2 h-4 w-4 text-primary" />
-            <span>Date limite: {formatDate(opportunity.deadline)}</span>
-          </div>
-          <div className="flex items-center text-sm text-gray-600">
-            <DollarSign className="mr-2 h-4 w-4 text-primary" />
-            <span>Montant: {formatAmount(opportunity.minAmount, opportunity.maxAmount)}</span>
-          </div>
-          <div className="flex items-center text-sm text-gray-600">
-            <Tag className="mr-2 h-4 w-4 text-primary" />
-            <span>Type: {opportunity.fundingType}</span>
-          </div>
-        </div>
-
-        <div className="mb-4">
-          <p className="text-sm text-gray-700 line-clamp-3">{opportunity.description}</p>
-        </div>
-
-        <div className="flex flex-wrap gap-2 mb-4">
-          {opportunity.sectors.map((sector, index) => (
-            <Badge key={index} variant="secondary" className="text-xs">
-              {sector}
+        <div className="space-y-5">
+          <div className="flex items-start justify-between">
+            <div className="flex-1 space-y-2">
+              <h3 className="text-lg font-semibold text-foreground leading-tight group-hover:text-primary transition-colors">
+                {opportunity.title}
+              </h3>
+              <div className="flex items-center text-sm text-muted-foreground">
+                <Building2 className="mr-2 h-4 w-4" />
+                <span>{opportunity.fundingProgram}</span>
+              </div>
+            </div>
+            <Badge className={`${getStatusColor(opportunity.status)} font-medium px-3 py-1`}>
+              {opportunity.status}
             </Badge>
-          ))}
-        </div>
+          </div>
 
-        <div className="flex space-x-2">
-          <Button asChild className="flex-1">
-            <Link href={`/funding/${opportunity.id}`}>
-              <Eye className="mr-2 h-4 w-4" />
-              Voir détails
-            </Link>
-          </Button>
-          {opportunity.externalLink && (
-            <Button variant="outline" asChild>
-              <a href={opportunity.externalLink} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4" />
-              </a>
+          <div className="grid grid-cols-1 gap-3">
+            <div className="flex items-center text-sm text-muted-foreground">
+              <Calendar className="mr-3 h-4 w-4 text-primary" />
+              <span className="font-medium">Date limite:</span>
+              <span className="ml-2">{formatDate(opportunity.deadline)}</span>
+            </div>
+            <div className="flex items-center text-sm text-muted-foreground">
+              <Euro className="mr-3 h-4 w-4 text-primary" />
+              <span className="font-medium">Montant:</span>
+              <span className="ml-2">{formatAmount(opportunity.minAmount, opportunity.maxAmount)}</span>
+            </div>
+            <div className="flex items-center text-sm text-muted-foreground">
+              <Tag className="mr-3 h-4 w-4 text-primary" />
+              <span className="font-medium">Type:</span>
+              <span className="ml-2">{opportunity.fundingType}</span>
+            </div>
+          </div>
+
+          <div className="border-t border-border pt-4">
+            <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
+              {opportunity.description}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {opportunity.sectors.map((sector, index) => (
+              <Badge key={index} variant="outline" className="text-xs font-medium bg-accent/50 text-accent-foreground border-accent">
+                {sector}
+              </Badge>
+            ))}
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <Button asChild className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-medium">
+              <Link href={`/funding/${opportunity.id}`}>
+                <Eye className="mr-2 h-4 w-4" />
+                Voir les détails
+              </Link>
             </Button>
-          )}
+            {opportunity.externalLink && (
+              <Button variant="outline" size="icon" asChild className="border-border hover:bg-accent">
+                <a href={opportunity.externalLink} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              </Button>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

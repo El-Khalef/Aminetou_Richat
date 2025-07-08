@@ -87,8 +87,7 @@ export class DatabaseStorage implements IStorage {
       query = query.where(and(...conditions));
     }
     
-    const opportunities = await query.orderBy(desc(fundingOpportunities.createdAt));
-    return opportunities;
+    return await query.orderBy(desc(fundingOpportunities.createdAt));
   }
 
   async getFundingOpportunity(id: number): Promise<FundingOpportunity | undefined> {

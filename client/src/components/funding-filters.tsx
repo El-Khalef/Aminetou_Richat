@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, RotateCcw } from "lucide-react";
+import { Search, RotateCcw, Filter } from "lucide-react";
 
 export interface FilterValues {
   sector?: string;
@@ -37,16 +37,25 @@ export function FundingFilters({ onFiltersChange }: FundingFiltersProps) {
   };
 
   return (
-    <Card className="mb-8">
+    <Card className="mb-12 card-shadow border-0">
       <CardContent className="p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Filtres de recherche</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+            <Filter className="h-5 w-5 text-primary" />
+          </div>
           <div>
-            <Label htmlFor="sector" className="text-sm font-medium text-gray-700 mb-2">
-              Secteur
+            <h3 className="text-lg font-semibold text-foreground">Filtres de recherche</h3>
+            <p className="text-sm text-muted-foreground">Trouvez les appels qui correspondent à vos critères</p>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="space-y-2">
+            <Label htmlFor="sector" className="text-sm font-medium text-foreground">
+              Secteur d'activité
             </Label>
             <Select onValueChange={(value) => handleInputChange("sector", value)}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Tous les secteurs" />
               </SelectTrigger>
               <SelectContent>
@@ -62,12 +71,12 @@ export function FundingFilters({ onFiltersChange }: FundingFiltersProps) {
             </Select>
           </div>
 
-          <div>
-            <Label htmlFor="fundingType" className="text-sm font-medium text-gray-700 mb-2">
+          <div className="space-y-2">
+            <Label htmlFor="fundingType" className="text-sm font-medium text-foreground">
               Type de financement
             </Label>
             <Select onValueChange={(value) => handleInputChange("fundingType", value)}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-background border-border">
                 <SelectValue placeholder="Tous les types" />
               </SelectTrigger>
               <SelectContent>
@@ -80,37 +89,40 @@ export function FundingFilters({ onFiltersChange }: FundingFiltersProps) {
             </Select>
           </div>
 
-          <div>
-            <Label htmlFor="minAmount" className="text-sm font-medium text-gray-700 mb-2">
-              Montant minimum
+          <div className="space-y-2">
+            <Label htmlFor="minAmount" className="text-sm font-medium text-foreground">
+              Montant minimum (€)
             </Label>
             <Input
               id="minAmount"
               type="number"
-              placeholder="0"
+              placeholder="Ex: 50 000"
+              className="bg-background border-border"
               value={filters.minAmount || ""}
               onChange={(e) => handleInputChange("minAmount", parseInt(e.target.value) || 0)}
             />
           </div>
 
-          <div>
-            <Label htmlFor="deadline" className="text-sm font-medium text-gray-700 mb-2">
-              Date limite
+          <div className="space-y-2">
+            <Label htmlFor="deadline" className="text-sm font-medium text-foreground">
+              Date limite avant le
             </Label>
             <Input
               id="deadline"
               type="date"
+              className="bg-background border-border"
               value={filters.deadline || ""}
               onChange={(e) => handleInputChange("deadline", e.target.value)}
             />
           </div>
         </div>
-        <div className="mt-4 flex space-x-3">
-          <Button onClick={handleSearch} className="bg-primary hover:bg-blue-700">
+        
+        <div className="mt-6 flex gap-3">
+          <Button onClick={handleSearch} className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium">
             <Search className="mr-2 h-4 w-4" />
-            Rechercher
+            Rechercher les appels
           </Button>
-          <Button onClick={handleReset} variant="outline">
+          <Button onClick={handleReset} variant="outline" className="border-border hover:bg-accent">
             <RotateCcw className="mr-2 h-4 w-4" />
             Réinitialiser
           </Button>
