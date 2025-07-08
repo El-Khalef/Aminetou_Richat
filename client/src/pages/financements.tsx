@@ -246,7 +246,7 @@ export default function Financements() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="border-gray-200">
           <CardContent className="p-4">
-            <h3 className="font-medium text-gray-900 mb-3">Score moyen de viabilité</h3>
+            <h3 className="font-medium text-gray-900 mb-3">Score moyen de viabilité (à définir avec l'IA)</h3>
             <div className="flex items-center gap-2">
               <div className="text-3xl font-bold text-green-600">
                 {Math.round(applications.reduce((sum, app) => sum + app.completionScore, 0) / applications.length || 0)}
