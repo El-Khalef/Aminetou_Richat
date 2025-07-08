@@ -34,6 +34,7 @@ export const clients = pgTable("clients", {
   phone: varchar("phone", { length: 50 }),
   address: text("address"),
   legalStatus: varchar("legal_status", { length: 100 }),
+  structureType: varchar("structure_type", { length: 50 }).default("Privé"), // "État", "Institution publique", "Privé"
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

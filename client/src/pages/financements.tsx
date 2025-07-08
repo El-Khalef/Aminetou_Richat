@@ -223,7 +223,20 @@ export default function Financements() {
                     <Building className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">{application.client.organizationName}</h3>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-medium text-gray-900">{application.client.organizationName}</h3>
+                      <Badge 
+                        className={`text-xs px-2 py-1 ${
+                          application.client.structureType === 'État' 
+                            ? 'bg-blue-100 text-blue-800 border-blue-200' 
+                            : application.client.structureType === 'Institution publique'
+                            ? 'bg-indigo-100 text-indigo-800 border-indigo-200'
+                            : 'bg-green-100 text-green-800 border-green-200'
+                        }`}
+                      >
+                        {application.client.structureType || 'Privé'}
+                      </Badge>
+                    </div>
                     <p className="text-sm text-gray-500">{application.fundingOpportunity.title}</p>
                   </div>
                 </div>
