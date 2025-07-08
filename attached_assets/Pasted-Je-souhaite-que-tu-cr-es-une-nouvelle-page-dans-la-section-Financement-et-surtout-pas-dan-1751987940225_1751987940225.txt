@@ -1,0 +1,66 @@
+Je souhaite que tu crées une **nouvelle page dans la section “Financement”** (et **surtout pas** dans “Dossier”).
+
+🎯 Cette page doit servir de **tableau de bord complet pour une consultante en finance**. Elle ne doit pas être une simple liste de candidatures.
+
+---
+
+📌 Objectif :
+Permettre à la consultante d’avoir une **vue d’ensemble claire** sur tous les dossiers/projets clients, pour :
+
+- Accéder aux **documents fournis**
+- Évaluer la **bancabilité financière**
+- Vérifier la **complétude** du dossier
+- Suivre **l’avancement** du traitement
+- Préparer un **dossier solide pour soumission**
+
+---
+
+🧱 Structure du tableau de bord :
+
+Pour chaque **projet client**, afficher dans un tableau ou carte lisible :
+
+1. **Nom du client / de la structure**
+2. **Nom du projet / de l’appel**
+3. **Type de financement visé**
+4. **Montant demandé**
+5. **Statut du dossier** (menu déroulant ou indicateur) :  
+   - En attente de documents  
+   - En cours d’analyse  
+   - Complet  
+   - Prêt pour soumission  
+   - Soumis au bailleur  
+   - Refusé / Accepté
+6. **Avancement (%)** ou barre de progression (ex : 60 % complété)
+7. **Bouton “Voir les documents”** → ouvre une pop-up ou une section avec :
+   - Statuts juridiques
+   - Budget prévisionnel
+   - Business plan / Note de cadrage
+   - Pitch deck
+   - Lettre d’intention
+   - Étude de faisabilité
+   - Annexes
+   - Preuves de cofinancement
+
+8. **Zone d’analyse financière** :
+   - Note libre (champ pour écrire une analyse)
+   - Score ou rating sur :
+     - Viabilité économique
+     - Cohérence budget/activité
+     - Capacité de cofinancement
+     - Alignement avec les critères du fonds
+
+9. **Section “Pièces manquantes”** (détectée automatiquement selon une liste attendue)
+10. (Optionnel) champ "Assigné à : …" pour suivi interne
+
+---
+
+✅ Design :
+- Garde une interface **propre, claire, lisible**
+- Design en **tableau de bord**, responsive
+- Utilise Tailwind, Bootstrap ou un autre système moderne
+
+ Ne change pas le design des autres pages  
+ Ne renomme pas cette page "Dossier"  
+ Intègre-la dans la **section Financement**
+
+Merci !

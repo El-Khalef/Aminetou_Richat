@@ -41,6 +41,16 @@ export function Navigation() {
                   Financement
                 </Link>
                 <Link
+                  href="/consultant-dashboard"
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    isActive("/consultant-dashboard")
+                      ? "text-primary bg-accent"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  }`}
+                >
+                  Tableau de bord consultante
+                </Link>
+                <Link
                   href="/dossiers"
                   className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                     isActive("/dossiers")
