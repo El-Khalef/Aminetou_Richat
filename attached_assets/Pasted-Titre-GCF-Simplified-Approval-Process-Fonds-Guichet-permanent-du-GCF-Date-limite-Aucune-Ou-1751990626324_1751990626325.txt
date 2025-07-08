@@ -1,0 +1,59 @@
+Titre : GCF - Simplified Approval Process
+Fonds : Guichet permanent du GCF
+Date limite : Aucune - Ouvert en continu
+Montant : Jusqu'à USD 25 millions (anciennement limité à 10M)
+Type de financement : Subventions, prêts concessionnels, garanties
+Éligibilité : ✅ ÉLIGIBLE
+Critères principaux : Pays en développement ; Entité accréditée GCF ; Projet simple, impact climat clair ; Faible risque environnemental/social
+Documents requis : Funding Proposal ; Budget ; Plan de mise en œuvre ; Logical Framework
+Statut : OUVERT
+
+Titre : GCF - Full Funding Proposal
+Fonds : Guichet permanent du GCF
+Date limite : Soumissions continues – Board 3 fois/an
+Montant : Plus de USD 10 millions
+Type de financement : Subventions, prêts, garanties, capitaux propres
+Éligibilité : ✅ ÉLIGIBLE
+Critères principaux : Pays en développement ; Entité accréditée GCF ; Projet structuré avec étude de faisabilité
+Documents requis : Concept Note ; Full Funding Proposal ; Feasibility Study
+Statut : OUVERT
+
+Titre : LDCF - Projets d'adaptation
+Fonds : Fonds GEF dédié aux PMA
+Date limite : Soumissions continues – Council 2 fois/an
+Montant : Allocation nationale spécifique (montant à confirmer)
+Type de financement : Subventions
+Éligibilité : ✅ ÉLIGIBLE (PMA)
+Critères principaux : Pays Moins Avancé ; Projets d’adaptation ; Alignement PAN/PNA
+Documents requis : PIF ; CEO Endorsement ; Project Document ; Budget détaillé
+Statut : OUVERT
+
+Titre : SCCF - Adaptation PEID
+Fonds : Fonds GEF focus PEID
+Date limite : Soumissions continues – Council 2 fois/an
+Montant : Variable
+Type de financement : Subventions
+Éligibilité : ❓ INCERTAIN (Mauritanie n’est pas un PEID)
+Critères principaux : Focus PEID ; Projets d’innovation ; Résilience climatique
+Documents requis : PIF ; CEO Endorsement ; Innovation Framework ; Project Document
+Statut : À VÉRIFIER
+
+Titre : CTF - Technologies propres
+Fonds : Programme CIF via BMD
+Date limite : Approche programmatique
+Montant : Plafond 30M USD/an (subventions)
+Type de financement : Prêts concessionnels, subventions
+Éligibilité : ❓ À VÉRIFIER (statut pays pilote non confirmé)
+Critères principaux : Pays pilote CTF ; Technologies bas-carbone ; Accès via BMD
+Documents requis : Plan d'investissement national ; Business case
+Statut : PAYS PILOTE?
+
+Titre : MAF Call 2025
+Fonds : Mitigation Action Facility
+Date limite : 23 juillet 2025 à 15h CEST
+Montant : Non précisé
+Type de financement : Subventions pour projets de mitigation
+Éligibilité : ✅ ÉLIGIBLE (si conforme aux critères MAF)
+Critères principaux : Projets ambitieux, innovants, reproductibles ; forte contribution à la NDC
+Documents requis : Outline ; concept de projet ; estimation des impacts ; justification de financement
+Statut : OUVERT
