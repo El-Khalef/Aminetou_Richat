@@ -2,28 +2,47 @@ import { useState, useEffect } from "react";
 import type { FundingOpportunity } from "@shared/schema";
 
 const FAVORITES_KEY = "richat_funding_favorites";
+const FAVORITES_CHANGED_EVENT = "richat_favorites_changed";
 
 export function useFavorites() {
   const [favorites, setFavorites] = useState<number[]>([]);
 
   // Charger les favoris depuis localStorage au démarrage
   useEffect(() => {
-    const stored = localStorage.getItem(FAVORITES_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setFavorites(Array.isArray(parsed) ? parsed : []);
-      } catch (error) {
-        console.warn("Error parsing favorites from localStorage:", error);
-        setFavorites([]);
+    const loadFavorites = () => {
+      const stored = localStorage.getItem(FAVORITES_KEY);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setFavorites(Array.isArray(parsed) ? parsed : []);
+        } catch (error) {
+          console.warn("Error parsing favorites from localStorage:", error);
+          setFavorites([]);
+        }
       }
-    }
+    };
+
+    loadFavorites();
+
+    // Écouter les changements depuis d'autres instances du hook
+    const handleFavoritesChanged = () => {
+      loadFavorites();
+    };
+
+    window.addEventListener(FAVORITES_CHANGED_EVENT, handleFavoritesChanged);
+    
+    return () => {
+      window.removeEventListener(FAVORITES_CHANGED_EVENT, handleFavoritesChanged);
+    };
   }, []);
 
-  // Sauvegarder les favoris dans localStorage
+  // Sauvegarder les favoris dans localStorage et notifier les autres instances
   const saveFavorites = (newFavorites: number[]) => {
     setFavorites(newFavorites);
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
+    
+    // Notifier les autres instances du hook
+    window.dispatchEvent(new CustomEvent(FAVORITES_CHANGED_EVENT));
   };
 
   // Ajouter un appel aux favoris
