@@ -145,6 +145,7 @@ export function FundingDetailModal({ opportunity, open, onClose }: FundingDetail
               )}
               <Button 
                 onClick={() => toggleFavorite(opportunity.id)}
+                size="sm"
                 className={`font-medium ${
                   isBookmarked 
                     ? "bg-green-600 hover:bg-green-700 text-white" 

@@ -198,7 +198,8 @@ export function FundingCard({ opportunity, onOpenModal, viewMode = "grid" }: Fun
           <div className="flex gap-3 pt-2">
             <Button 
               onClick={() => toggleFavorite(opportunity.id)}
-              className={`flex-1 font-medium ${
+              size="sm"
+              className={`font-medium ${
                 isBookmarked 
                   ? "bg-green-600 hover:bg-green-700 text-white" 
                   : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
