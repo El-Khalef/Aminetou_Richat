@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Navigation } from "@/components/navigation";
 import { StatisticsCards } from "@/components/statistics-cards";
-import { FundingFilters, FilterValues } from "@/components/funding-filters";
+import { SearchAndFilters, SearchFilters } from "@/components/search-and-filters";
 import { FundingCard } from "@/components/funding-card";
 import { FundingDetailModal } from "@/components/funding-detail-modal";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,7 +11,7 @@ import { Search } from "lucide-react";
 import type { FundingOpportunity } from "@shared/schema";
 
 export default function Dashboard() {
-  const [filters, setFilters] = useState<FilterValues>({});
+  const [filters, setFilters] = useState<SearchFilters>({});
   const [selectedOpportunity, setSelectedOpportunity] = useState<FundingOpportunity | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -33,7 +33,7 @@ export default function Dashboard() {
     },
   });
 
-  const handleFiltersChange = (newFilters: FilterValues) => {
+  const handleFiltersChange = (newFilters: SearchFilters) => {
     setFilters(newFilters);
   };
 
@@ -52,23 +52,33 @@ export default function Dashboard() {
       <Navigation />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-10">
-          <div className="space-y-3">
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">
-              Tableau de bord des financements
+        <div className="mb-8">
+          <div className="mb-6">
+            <h1 className="text-sm font-light text-gray-600 mb-8">
+              Suivez les appels à projets des fonds climatiques internationaux
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl">
-              Découvrez et gérez les opportunités de financement disponibles pour la Mauritanie. 
-              Utilisez les filtres pour trouver les appels qui correspondent à vos projets.
-            </p>
           </div>
+          
+          <SearchAndFilters onFiltersChange={handleFiltersChange} />
         </div>
 
         <StatisticsCards />
 
-        <FundingFilters onFiltersChange={handleFiltersChange} />
+        {/* Indicateur de résultats */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="text-sm text-gray-600">
+              {opportunities?.length || 0} appel{(opportunities?.length || 0) > 1 ? 's' : ''} actif{(opportunities?.length || 0) > 1 ? 's' : ''}
+            </span>
+          </div>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className={`grid gap-6 ${
+          filters.viewMode === "grid" 
+            ? "grid-cols-1 lg:grid-cols-2 xl:grid-cols-3" 
+            : "grid-cols-1"
+        }`}>
           {isLoading ? (
             Array(6).fill(0).map((_, i) => (
               <Card key={i} className="card-shadow border-0">
@@ -117,7 +127,12 @@ export default function Dashboard() {
             </div>
           ) : (
             opportunities?.map((opportunity) => (
-              <FundingCard key={opportunity.id} opportunity={opportunity} onOpenModal={handleOpenModal} />
+              <FundingCard 
+                key={opportunity.id} 
+                opportunity={opportunity} 
+                onOpenModal={handleOpenModal}
+                viewMode={filters.viewMode || "list"}
+              />
             ))
           )}
         </div>

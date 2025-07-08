@@ -7,9 +7,10 @@ import type { FundingOpportunity } from "@shared/schema";
 interface FundingCardProps {
   opportunity: FundingOpportunity;
   onOpenModal: (opportunity: FundingOpportunity) => void;
+  viewMode?: "list" | "grid";
 }
 
-export function FundingCard({ opportunity, onOpenModal }: FundingCardProps) {
+export function FundingCard({ opportunity, onOpenModal, viewMode = "grid" }: FundingCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Ouvert":
@@ -48,6 +49,66 @@ export function FundingCard({ opportunity, onOpenModal }: FundingCardProps) {
       year: "numeric",
     });
   };
+
+  if (viewMode === "list") {
+    return (
+      <Card className="card-shadow hover:card-shadow-hover transition-all duration-300 border-0 group">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-base font-semibold text-foreground leading-tight group-hover:text-primary transition-colors truncate">
+                      {opportunity.title}
+                    </h3>
+                    <Badge className={`${getStatusColor(opportunity.status)} font-medium px-2 py-1 text-xs ml-3 flex-shrink-0`}>
+                      {opportunity.status}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center text-sm text-muted-foreground mb-2">
+                    <Building2 className="mr-2 h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">{opportunity.fundingProgram}</span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                    <div className="flex items-center">
+                      <Calendar className="mr-1 h-3 w-3 text-primary" />
+                      <span>{formatDate(opportunity.deadline)}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Euro className="mr-1 h-3 w-3 text-primary" />
+                      <span>{formatAmount(opportunity.minAmount, opportunity.maxAmount)}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Tag className="mr-1 h-3 w-3 text-primary" />
+                      <span>{opportunity.fundingType}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2 flex-shrink-0">
+                  <Button 
+                    onClick={() => onOpenModal(opportunity)}
+                    size="sm"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+                  >
+                    <Eye className="mr-1 h-3 w-3" />
+                    Détails
+                  </Button>
+                  {opportunity.externalLink && (
+                    <Button variant="outline" size="sm" asChild className="border-border hover:bg-accent">
+                      <a href={opportunity.externalLink} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="card-shadow hover:card-shadow-hover transition-all duration-300 border-0 group">
