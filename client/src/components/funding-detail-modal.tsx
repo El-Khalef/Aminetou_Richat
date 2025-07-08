@@ -63,10 +63,7 @@ export function FundingDetailModal({ opportunity, open, onClose }: FundingDetail
               {opportunity.status}
             </Badge>
           </div>
-          <DialogClose className="absolute right-6 top-6 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground z-50">
-            <X className="h-4 w-4" />
-            <span className="sr-only">Fermer</span>
-          </DialogClose>
+
         </DialogHeader>
 
         <div className="p-6 space-y-6">
