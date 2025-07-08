@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Euro, Tag, Eye, ExternalLink, Building2, Bookmark, BookmarkCheck } from "lucide-react";
 import { useFavorites } from "@/hooks/use-favorites";
+import { useCountdown, formatCountdown } from "@/hooks/use-countdown";
 import type { FundingOpportunity } from "@shared/schema";
 
 interface FundingCardProps {
@@ -14,6 +15,8 @@ interface FundingCardProps {
 export function FundingCard({ opportunity, onOpenModal, viewMode = "grid" }: FundingCardProps) {
   const { toggleFavorite, isFavorite } = useFavorites();
   const isBookmarked = isFavorite(opportunity.id);
+  const countdown = useCountdown(opportunity.deadline);
+  const countdownText = formatCountdown(countdown);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -77,6 +80,11 @@ export function FundingCard({ opportunity, onOpenModal, viewMode = "grid" }: Fun
                       <Calendar className="mr-1 h-3 w-3 text-primary" />
                       <span>{formatDate(opportunity.deadline)}</span>
                     </div>
+                    {countdownText && (
+                      <div className={`text-xs font-medium ${countdown.isExpired ? 'text-red-500' : countdown.days <= 7 ? 'text-orange-500' : 'text-amber-600'}`}>
+                        {countdownText}
+                      </div>
+                    )}
                     <div className="flex items-center">
                       <Euro className="mr-1 h-3 w-3 text-primary" />
                       <span>{formatAmount(opportunity.minAmount, opportunity.maxAmount)}</span>
@@ -149,6 +157,11 @@ export function FundingCard({ opportunity, onOpenModal, viewMode = "grid" }: Fun
               <Calendar className="mr-3 h-4 w-4 text-primary" />
               <span className="font-medium">Date limite:</span>
               <span className="ml-2">{formatDate(opportunity.deadline)}</span>
+              {countdownText && (
+                <span className={`ml-3 text-xs font-medium px-2 py-1 rounded ${countdown.isExpired ? 'bg-red-100 text-red-600' : countdown.days <= 7 ? 'bg-orange-100 text-orange-600' : 'bg-amber-100 text-amber-600'}`}>
+                  {countdownText}
+                </span>
+              )}
             </div>
             <div className="flex items-center text-sm text-muted-foreground">
               <Euro className="mr-3 h-4 w-4 text-primary" />
