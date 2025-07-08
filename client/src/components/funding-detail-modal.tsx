@@ -119,12 +119,19 @@ export function FundingDetailModal({ opportunity, open, onClose }: FundingDetail
             </div>
           )}
 
-          {opportunity.documents && (
+          {opportunity.requiredDocuments && (
             <div className="border-t border-border pt-6">
-              <h4 className="font-medium text-foreground mb-3">Documents requis</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {opportunity.documents}
-              </p>
+              <h4 className="font-medium text-foreground mb-3 flex items-center">
+                📎 Documents à soumettre
+              </h4>
+              <ul className="space-y-2">
+                {opportunity.requiredDocuments.split(';').map((doc, index) => (
+                  <li key={index} className="flex items-start text-sm text-muted-foreground">
+                    <span className="text-green-600 mr-2 mt-0.5">✅</span>
+                    <span className="leading-relaxed">{doc.trim()}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
