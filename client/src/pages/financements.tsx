@@ -400,7 +400,7 @@ export default function Financements() {
               <User className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h3 className="font-medium text-gray-900">Sarah Kone</h3>
+              <h3 className="font-medium text-gray-900">Aminetou EL KHALEF</h3>
               <p className="text-sm text-gray-500">5 dossiers assignés</p>
             </div>
           </div>
@@ -414,7 +414,7 @@ export default function Financements() {
               <User className="w-5 h-5 text-green-600" />
             </div>
             <div>
-              <h3 className="font-medium text-gray-900">Ahmed Ba</h3>
+              <h3 className="font-medium text-gray-900">Consultant N2</h3>
               <p className="text-sm text-gray-500">3 dossiers assignés</p>
             </div>
           </div>
