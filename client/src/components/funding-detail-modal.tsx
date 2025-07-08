@@ -1,7 +1,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Euro, Tag, ExternalLink, Building2, FileText, X } from "lucide-react";
+import { Calendar, Euro, Tag, ExternalLink, Building2, FileText, X, Bookmark, BookmarkCheck } from "lucide-react";
+import { useFavorites } from "@/hooks/use-favorites";
 import type { FundingOpportunity } from "@shared/schema";
 
 interface FundingDetailModalProps {
@@ -11,7 +12,11 @@ interface FundingDetailModalProps {
 }
 
 export function FundingDetailModal({ opportunity, open, onClose }: FundingDetailModalProps) {
+  const { toggleFavorite, isFavorite } = useFavorites();
+  
   if (!opportunity) return null;
+  
+  const isBookmarked = isFavorite(opportunity.id);
 
   const formatAmount = (min?: number, max?: number) => {
     if (!min && !max) return "Non spécifié";
@@ -138,6 +143,21 @@ export function FundingDetailModal({ opportunity, open, onClose }: FundingDetail
                   </a>
                 </Button>
               )}
+              <Button 
+                onClick={() => toggleFavorite(opportunity.id)}
+                className={`font-medium ${
+                  isBookmarked 
+                    ? "bg-green-600 hover:bg-green-700 text-white" 
+                    : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
+                }`}
+              >
+                {isBookmarked ? (
+                  <BookmarkCheck className="mr-2 h-4 w-4" />
+                ) : (
+                  <Bookmark className="mr-2 h-4 w-4" />
+                )}
+                {isBookmarked ? "Appel sauvegardé ✅" : "Sauvegarder cet appel"}
+              </Button>
               <Button variant="outline" onClick={onClose} className="border-border hover:bg-accent">
                 Fermer
               </Button>

@@ -1,7 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Euro, Tag, Eye, ExternalLink, Building2 } from "lucide-react";
+import { Calendar, Euro, Tag, Eye, ExternalLink, Building2, Bookmark, BookmarkCheck } from "lucide-react";
+import { useFavorites } from "@/hooks/use-favorites";
 import type { FundingOpportunity } from "@shared/schema";
 
 interface FundingCardProps {
@@ -11,6 +12,9 @@ interface FundingCardProps {
 }
 
 export function FundingCard({ opportunity, onOpenModal, viewMode = "grid" }: FundingCardProps) {
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const isBookmarked = isFavorite(opportunity.id);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Ouvert":
@@ -94,6 +98,19 @@ export function FundingCard({ opportunity, onOpenModal, viewMode = "grid" }: Fun
                     <Eye className="mr-1 h-3 w-3" />
                     Détails
                   </Button>
+                  <Button 
+                    onClick={() => toggleFavorite(opportunity.id)}
+                    size="sm"
+                    variant={isBookmarked ? "default" : "outline"}
+                    className={isBookmarked ? "bg-green-600 hover:bg-green-700 text-white" : "border-border hover:bg-accent"}
+                  >
+                    {isBookmarked ? (
+                      <BookmarkCheck className="mr-1 h-3 w-3" />
+                    ) : (
+                      <Bookmark className="mr-1 h-3 w-3" />
+                    )}
+                    {isBookmarked ? "Sauvegardé ✅" : "Sauvegarder"}
+                  </Button>
                   {opportunity.externalLink && (
                     <Button variant="outline" size="sm" asChild className="border-border hover:bg-accent">
                       <a href={opportunity.externalLink} target="_blank" rel="noopener noreferrer">
@@ -176,6 +193,24 @@ export function FundingCard({ opportunity, onOpenModal, viewMode = "grid" }: Fun
                 </a>
               </Button>
             )}
+          </div>
+          
+          <div className="flex gap-3 pt-2">
+            <Button 
+              onClick={() => toggleFavorite(opportunity.id)}
+              className={`flex-1 font-medium ${
+                isBookmarked 
+                  ? "bg-green-600 hover:bg-green-700 text-white" 
+                  : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
+              }`}
+            >
+              {isBookmarked ? (
+                <BookmarkCheck className="mr-2 h-4 w-4" />
+              ) : (
+                <Bookmark className="mr-2 h-4 w-4" />
+              )}
+              {isBookmarked ? "Appel sauvegardé ✅" : "Sauvegarder cet appel"}
+            </Button>
           </div>
         </div>
       </CardContent>
