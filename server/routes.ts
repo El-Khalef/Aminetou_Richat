@@ -96,31 +96,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Applications (dossiers) routes
-  app.get("/api/applications", async (req, res) => {
-    try {
-      const applications = await storage.getApplications();
-      res.json(applications);
-    } catch (error) {
-      console.error("Error fetching applications:", error);
-      res.status(500).json({ error: "Failed to fetch applications" });
-    }
-  });
-
-  app.get("/api/applications/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const application = await storage.getApplication(id);
-      if (!application) {
-        return res.status(404).json({ error: "Application not found" });
-      }
-      res.json(application);
-    } catch (error) {
-      console.error("Error fetching application:", error);
-      res.status(500).json({ error: "Failed to fetch application" });
-    }
-  });
-
   const httpServer = createServer(app);
   return httpServer;
 }
