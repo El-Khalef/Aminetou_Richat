@@ -20,7 +20,14 @@ import {
   Star,
   Edit3,
   User,
-  Building
+  Building,
+  BarChart3,
+  Calendar,
+  Bell,
+  Users,
+  Target,
+  Folder,
+  Clock
 } from "lucide-react";
 
 interface ApplicationWithDetails {
@@ -76,21 +83,59 @@ const requiredDocuments = [
   "Preuves de cofinancement"
 ];
 
+// Configuration des widgets
+const widgets = [
+  {
+    id: "overview",
+    title: "Aperçu des dossiers",
+    icon: Folder,
+    description: "Vue d'ensemble des projets clients"
+  },
+  {
+    id: "analysis",
+    title: "Analyse financière",
+    icon: BarChart3,
+    description: "Scores et viabilité des projets"
+  },
+  {
+    id: "missing-docs",
+    title: "Documents manquants",
+    icon: AlertCircle,
+    description: "Pièces non soumises"
+  },
+  {
+    id: "notifications",
+    title: "Notifications récentes",
+    icon: Bell,
+    description: "Dernières activités"
+  },
+  {
+    id: "ready-projects",
+    title: "Projets prêts",
+    icon: CheckCircle,
+    description: "Dossiers à 100% complétés"
+  },
+  {
+    id: "consultants",
+    title: "Consultants actifs",
+    icon: Users,
+    description: "Assignations en cours"
+  },
+  {
+    id: "calendar",
+    title: "Calendrier",
+    icon: Calendar,
+    description: "Deadlines à venir"
+  }
+];
+
 export default function Financements() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("tous");
+  const [activeWidget, setActiveWidget] = useState("overview");
   const [selectedApplication, setSelectedApplication] = useState<ApplicationWithDetails | null>(null);
   const [analysisNotes, setAnalysisNotes] = useState("");
 
   const { data: applications = [], isLoading } = useQuery<ApplicationWithDetails[]>({
     queryKey: ["/api/applications"],
-  });
-
-  const filteredApplications = applications.filter(app => {
-    const matchesSearch = app.client.organizationName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         app.fundingOpportunity.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "tous" || app.status === statusFilter;
-    return matchesSearch && matchesStatus;
   });
 
   const getStatusBadge = (status: string) => {
@@ -115,6 +160,316 @@ export default function Financements() {
         className={`w-4 h-4 ${i < stars ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
       />
     ));
+  };
+
+  // Widgets Components
+  const OverviewWidget = () => (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border-gray-200">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Folder className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Total dossiers</p>
+                <p className="text-2xl font-semibold text-gray-900">{applications.length}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-gray-200">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Projets prêts</p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  {applications.filter(app => app.status === "Prêt pour soumission").length}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-gray-200">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <Clock className="w-5 h-5 text-yellow-600" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">En attente</p>
+                <p className="text-2xl font-semibold text-gray-900">
+                  {applications.filter(app => app.status === "En attente de documents").length}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      
+      <div className="space-y-3">
+        {applications.slice(0, 5).map((application) => (
+          <Card key={application.id} className="border-gray-200">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Building className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900">{application.client.organizationName}</h3>
+                    <p className="text-sm text-gray-500">{application.fundingOpportunity.title}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  {getStatusBadge(application.status)}
+                  <div className="w-20">
+                    <Progress value={getProgressValue(application.status)} className="h-2" />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+
+  const AnalysisWidget = () => (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="border-gray-200">
+          <CardContent className="p-4">
+            <h3 className="font-medium text-gray-900 mb-3">Score moyen de viabilité</h3>
+            <div className="flex items-center gap-2">
+              <div className="text-3xl font-bold text-green-600">
+                {Math.round(applications.reduce((sum, app) => sum + app.completionScore, 0) / applications.length || 0)}
+              </div>
+              <span className="text-gray-500">/100</span>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-gray-200">
+          <CardContent className="p-4">
+            <h3 className="font-medium text-gray-900 mb-3">Montant total demandé</h3>
+            <div className="text-3xl font-bold text-blue-600">
+              {applications.reduce((sum, app) => sum + (app.requestedAmount || 0), 0).toLocaleString()} €
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      
+      <Card className="border-gray-200">
+        <CardHeader>
+          <CardTitle className="text-lg">Analyse par projet</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {applications.map((app) => (
+              <div key={app.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <h4 className="font-medium text-gray-900">{app.client.organizationName}</h4>
+                  <p className="text-sm text-gray-500">{app.fundingOpportunity.fundingProgram}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    {getViabilityScore(app.completionScore)}
+                  </div>
+                  <span className="text-sm text-gray-500">({app.completionScore}/100)</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const MissingDocsWidget = () => (
+    <div className="space-y-4">
+      {applications.map((app) => {
+        const missingDocs = getMissingDocuments(app.documents);
+        if (missingDocs.length === 0) return null;
+        
+        return (
+          <Card key={app.id} className="border-red-200 bg-red-50">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h3 className="font-medium text-red-900">{app.client.organizationName}</h3>
+                  <p className="text-sm text-red-700 mt-1">Documents manquants:</p>
+                  <ul className="text-sm text-red-600 mt-2 space-y-1">
+                    {missingDocs.map((doc) => (
+                      <li key={doc} className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                        {doc}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
+
+  const NotificationsWidget = () => (
+    <div className="space-y-3">
+      <Card className="border-gray-200">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-3">
+            <Bell className="w-5 h-5 text-blue-600" />
+            <div>
+              <p className="font-medium text-gray-900">Nouveau document soumis</p>
+              <p className="text-sm text-gray-500">EcoTech Mauritanie - Il y a 2 heures</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card className="border-gray-200">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 text-green-600" />
+            <div>
+              <p className="font-medium text-gray-900">Dossier prêt pour soumission</p>
+              <p className="text-sm text-gray-500">Association Verte - Il y a 1 jour</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card className="border-gray-200">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-yellow-600" />
+            <div>
+              <p className="font-medium text-gray-900">Document expiré</p>
+              <p className="text-sm text-gray-500">Startup Solaire - Il y a 3 jours</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const ReadyProjectsWidget = () => (
+    <div className="space-y-3">
+      {applications.filter(app => app.status === "Prêt pour soumission").map((app) => (
+        <Card key={app.id} className="border-green-200 bg-green-50">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-green-900">{app.client.organizationName}</h3>
+                  <p className="text-sm text-green-700">{app.fundingOpportunity.title}</p>
+                  <p className="text-xs text-green-600 mt-1">
+                    {app.requestedAmount ? `${app.requestedAmount.toLocaleString()} €` : "Montant non spécifié"}
+                  </p>
+                </div>
+              </div>
+              <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                Soumettre
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+
+  const ConsultantsWidget = () => (
+    <div className="space-y-3">
+      <Card className="border-gray-200">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <User className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900">Sarah Kone</h3>
+              <p className="text-sm text-gray-500">5 dossiers assignés</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card className="border-gray-200">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+              <User className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900">Ahmed Ba</h3>
+              <p className="text-sm text-gray-500">3 dossiers assignés</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const CalendarWidget = () => (
+    <div className="space-y-3">
+      <Card className="border-gray-200">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-3">
+            <Calendar className="w-5 h-5 text-red-600" />
+            <div>
+              <p className="font-medium text-gray-900">Deadline GCF</p>
+              <p className="text-sm text-gray-500">Dans 5 jours - 15 Jan 2025</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card className="border-gray-200">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-3">
+            <Calendar className="w-5 h-5 text-yellow-600" />
+            <div>
+              <p className="font-medium text-gray-900">Réunion client</p>
+              <p className="text-sm text-gray-500">Demain - 14h00</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const renderActiveWidget = () => {
+    switch (activeWidget) {
+      case "overview":
+        return <OverviewWidget />;
+      case "analysis":
+        return <AnalysisWidget />;
+      case "missing-docs":
+        return <MissingDocsWidget />;
+      case "notifications":
+        return <NotificationsWidget />;
+      case "ready-projects":
+        return <ReadyProjectsWidget />;
+      case "consultants":
+        return <ConsultantsWidget />;
+      case "calendar":
+        return <CalendarWidget />;
+      default:
+        return <OverviewWidget />;
+    }
   };
 
   const DocumentModal = ({ application }: { application: ApplicationWithDetails }) => (
@@ -232,20 +587,25 @@ export default function Financements() {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navigation />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-semibold text-gray-900">Tableau de bord consultante</h1>
-            </div>
-            <div className="grid gap-6">
+        <div className="flex h-screen">
+          <div className="w-80 bg-white border-r border-gray-200 p-6">
+            <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <Card key={i} className="animate-pulse border-gray-200">
-                  <CardContent className="p-6">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                  </CardContent>
-                </Card>
+                <div key={i} className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                </div>
               ))}
+            </div>
+          </div>
+          <div className="flex-1 p-6">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-200 rounded w-1/2 mb-6"></div>
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-32 bg-gray-200 rounded"></div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -256,152 +616,78 @@ export default function Financements() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-gray-900">Tableau de bord consultante</h1>
-          </div>
-
-          {/* Filtres */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-              <div className="flex-1 min-w-0">
-                <Input
-                  placeholder="Rechercher par organisation ou projet..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                />
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full sm:w-48 border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                  <SelectValue placeholder="Filtrer par statut" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="tous">Tous les statuts</SelectItem>
-                  <SelectItem value="En attente de documents">En attente de documents</SelectItem>
-                  <SelectItem value="En cours d'analyse">En cours d'analyse</SelectItem>
-                  <SelectItem value="Complet">Complet</SelectItem>
-                  <SelectItem value="Prêt pour soumission">Prêt pour soumission</SelectItem>
-                  <SelectItem value="Soumis au bailleur">Soumis au bailleur</SelectItem>
-                  <SelectItem value="Accepté">Accepté</SelectItem>
-                  <SelectItem value="Refusé">Refusé</SelectItem>
-                </SelectContent>
-              </Select>
+      <div className="flex h-screen">
+        {/* Barre latérale */}
+        <div className="w-80 bg-white border-r border-gray-200 p-6 overflow-y-auto">
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-xl font-semibold text-gray-900 mb-2">Espace de travail</h1>
+              <p className="text-sm text-gray-500">Tableau de bord consultante</p>
+            </div>
+            
+            <div className="space-y-2">
+              {widgets.map((widget) => {
+                const Icon = widget.icon;
+                return (
+                  <button
+                    key={widget.id}
+                    onClick={() => setActiveWidget(widget.id)}
+                    className={`w-full text-left p-4 rounded-lg border transition-all duration-200 ${
+                      activeWidget === widget.id
+                        ? "bg-blue-50 border-blue-200 text-blue-900"
+                        : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                        activeWidget === widget.id
+                          ? "bg-blue-100"
+                          : "bg-white"
+                      }`}>
+                        <Icon className={`w-4 h-4 ${
+                          activeWidget === widget.id
+                            ? "text-blue-600"
+                            : "text-gray-500"
+                        }`} />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-sm">{widget.title}</h3>
+                        <p className="text-xs text-gray-500">{widget.description}</p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
+        </div>
 
-          {/* Tableau de bord des projets */}
-          <div className="space-y-4">
-            {filteredApplications.map((application) => (
-              <Card key={application.id} className="border-gray-200 hover:shadow-md transition-all duration-200 bg-white">
-                <CardContent className="p-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    {/* Client et projet */}
-                    <div className="lg:col-span-3">
-                      <div className="flex items-start gap-3">
-                        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Building className="w-6 h-6 text-blue-600" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h3 className="font-semibold text-gray-900 truncate">{application.client.organizationName}</h3>
-                          <p className="text-sm text-gray-500 mt-1 line-clamp-2">{application.fundingOpportunity.title}</p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <User className="w-4 h-4 text-gray-400" />
-                            <span className="text-xs text-gray-500">{application.client.contactPerson}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Type et montant */}
-                    <div className="lg:col-span-2">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <DollarSign className="w-4 h-4 text-green-600" />
-                          <span className="font-medium text-gray-900">{application.fundingType || "Subvention"}</span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          {application.requestedAmount ? `${application.requestedAmount?.toLocaleString()} €` : "Non spécifié"}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Statut */}
-                    <div className="lg:col-span-2">
-                      <div className="space-y-2">
-                        {getStatusBadge(application.status)}
-                        <p className="text-xs text-gray-500">
-                          Assigné à: {application.assignedConsultant || "Non assigné"}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Avancement */}
-                    <div className="lg:col-span-2">
-                      <div className="space-y-3">
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-gray-700">Avancement</span>
-                            <span className="text-sm text-gray-600">{getProgressValue(application.status)}%</span>
-                          </div>
-                          <Progress value={getProgressValue(application.status)} className="h-2" />
-                        </div>
-                        <div className="flex items-center gap-1">
-                          {getViabilityScore(application.completionScore)}
-                          <span className="text-xs text-gray-500 ml-1">({application.completionScore}/100)</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="lg:col-span-3">
-                      <div className="flex gap-2 justify-end">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button size="sm" variant="outline" className="border-gray-300" onClick={() => setSelectedApplication(application)}>
-                              <Eye className="w-4 h-4 mr-2" />
-                              Voir documents
-                            </Button>
-                          </DialogTrigger>
-                          {selectedApplication && <DocumentModal application={selectedApplication} />}
-                        </Dialog>
-                        
-                        <Button size="sm" variant="outline" className="border-gray-300">
-                          <Edit3 className="w-4 h-4 mr-2" />
-                          Modifier
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Documents manquants */}
-                  {getMissingDocuments(application.documents).length > 0 && (
-                    <div className="mt-6 p-4 bg-red-50 rounded-lg border border-red-200">
-                      <p className="text-sm text-red-800 font-medium flex items-center gap-2">
-                        <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                        Documents manquants: {getMissingDocuments(application.documents).join(", ")}
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+        {/* Zone centrale */}
+        <div className="flex-1 p-6 overflow-y-auto">
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-semibold text-gray-900">
+                {widgets.find(w => w.id === activeWidget)?.title || "Aperçu des dossiers"}
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">
+                {widgets.find(w => w.id === activeWidget)?.description || "Vue d'ensemble des projets clients"}
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+              {renderActiveWidget()}
+            </div>
           </div>
-
-          {filteredApplications.length === 0 && (
-            <Card className="border-gray-200 bg-white">
-              <CardContent className="p-12 text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FileText className="w-8 h-8 text-gray-400" />
-                </div>
-                <p className="text-gray-500 text-lg">Aucun dossier trouvé</p>
-                <p className="text-gray-400 text-sm mt-1">Essayez de modifier vos critères de recherche</p>
-              </CardContent>
-            </Card>
-          )}
         </div>
       </div>
+      
+      {/* Dialog pour les documents */}
+      <Dialog>
+        <DialogTrigger asChild>
+          <div className="hidden" />
+        </DialogTrigger>
+        {selectedApplication && <DocumentModal application={selectedApplication} />}
+      </Dialog>
     </div>
   );
 }
