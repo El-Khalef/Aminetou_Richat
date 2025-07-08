@@ -28,6 +28,7 @@ interface ApplicationWithDetails {
     contactPerson: string;
     email: string;
     phone?: string;
+    structureType?: string;
   };
   fundingOpportunity: {
     id: number;
@@ -164,6 +165,25 @@ export default function Dossiers() {
     </DialogContent>
   );
 
+  // Fonction pour formater le type de structure
+  const getStructureTypeBadge = (structureType: string | undefined) => {
+    if (!structureType) return null;
+    
+    const configs = {
+      'État': { label: 'État', variant: 'default' as const, className: 'bg-blue-100 text-blue-800 border-blue-200' },
+      'Institution publique': { label: 'Institution publique', variant: 'secondary' as const, className: 'bg-green-100 text-green-800 border-green-200' },
+      'Privé': { label: 'Privé : ONG / PME / Coopérative', variant: 'outline' as const, className: 'bg-orange-100 text-orange-800 border-orange-200' },
+    };
+    
+    const config = configs[structureType as keyof typeof configs] || configs['Privé'];
+    
+    return (
+      <Badge variant={config.variant} className={`text-xs ${config.className}`}>
+        {config.label}
+      </Badge>
+    );
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto p-6">
@@ -226,6 +246,7 @@ export default function Dossiers() {
                   <div className="flex items-center gap-3 mb-2">
                     <Building className="h-5 w-5 text-blue-500" />
                     <h3 className="text-lg font-semibold">{application.client.organizationName}</h3>
+                    {getStructureTypeBadge(application.client.structureType)}
                     <Badge variant="outline">{application.status}</Badge>
                   </div>
                   

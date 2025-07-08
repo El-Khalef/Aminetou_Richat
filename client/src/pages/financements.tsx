@@ -38,6 +38,7 @@ interface ApplicationWithDetails {
     contactPerson: string;
     email: string;
     phone?: string;
+    structureType?: string;
   };
   fundingOpportunity: {
     id: number;
@@ -141,6 +142,25 @@ export default function Financements() {
   const getStatusBadge = (status: string) => {
     const config = statusConfig[status as keyof typeof statusConfig] || { color: "bg-gray-50 text-gray-700 border-gray-200", progress: 0 };
     return <Badge className={`${config.color} border font-medium`}>{status}</Badge>;
+  };
+
+  // Fonction pour formater le type de structure
+  const getStructureTypeBadge = (structureType: string | undefined) => {
+    if (!structureType) return null;
+    
+    const configs = {
+      'État': { label: 'État', variant: 'default' as const, className: 'bg-blue-100 text-blue-800 border-blue-200' },
+      'Institution publique': { label: 'Institution publique', variant: 'secondary' as const, className: 'bg-green-100 text-green-800 border-green-200' },
+      'Privé': { label: 'Privé : ONG / PME / Coopérative', variant: 'outline' as const, className: 'bg-orange-100 text-orange-800 border-orange-200' },
+    };
+    
+    const config = configs[structureType as keyof typeof configs] || configs['Privé'];
+    
+    return (
+      <Badge variant={config.variant} className={`text-xs ${config.className}`}>
+        {config.label}
+      </Badge>
+    );
   };
 
   const getProgressValue = (status: string) => {
