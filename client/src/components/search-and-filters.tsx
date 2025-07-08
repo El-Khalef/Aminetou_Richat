@@ -29,6 +29,15 @@ export function SearchAndFilters({ onFiltersChange }: SearchAndFiltersProps) {
     onFiltersChange(newFilters);
   };
 
+  const handleSortChange = (value: string) => {
+    if (value === "title" && filters.sortBy === "title") {
+      // Si déjà trié par titre A→Z, basculer vers Z→A
+      handleFilterChange("sortBy", "title_desc");
+    } else {
+      handleFilterChange("sortBy", value);
+    }
+  };
+
   const clearFilters = () => {
     const clearedFilters = {
       searchTerm: "",
@@ -95,11 +104,9 @@ export function SearchAndFilters({ onFiltersChange }: SearchAndFiltersProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tous les fonds</SelectItem>
-                <SelectItem value="gcf">Green Climate Fund</SelectItem>
-                <SelectItem value="gef">Global Environment Facility</SelectItem>
-                <SelectItem value="ldcf">LDCF</SelectItem>
-                <SelectItem value="eu">Fonds européens</SelectItem>
-                <SelectItem value="afdb">Banque africaine de développement</SelectItem>
+                <SelectItem value="GCF">Guichet permanent du GCF</SelectItem>
+                <SelectItem value="GEF">Fonds GEF</SelectItem>
+                <SelectItem value="CIF">Programme CIF</SelectItem>
               </SelectContent>
             </Select>
 
@@ -119,7 +126,7 @@ export function SearchAndFilters({ onFiltersChange }: SearchAndFiltersProps) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-600">Trier par :</span>
-          <Select value={filters.sortBy || "deadline"} onValueChange={(value) => handleFilterChange("sortBy", value)}>
+          <Select value={filters.sortBy || "deadline"} onValueChange={handleSortChange}>
             <SelectTrigger className="w-auto min-w-[200px] bg-transparent border-none shadow-none text-sm text-gray-600">
               <SelectValue />
               <ChevronDown className="h-4 w-4 ml-2" />
@@ -128,7 +135,7 @@ export function SearchAndFilters({ onFiltersChange }: SearchAndFiltersProps) {
               <SelectItem value="deadline">Date limite (plus urgent)</SelectItem>
               <SelectItem value="amount">Montant (plus élevé)</SelectItem>
               <SelectItem value="recent">Plus récent</SelectItem>
-              <SelectItem value="alphabetical">Alphabétique</SelectItem>
+              <SelectItem value="title">Nom {filters.sortBy === "title" ? "(A→Z)" : filters.sortBy === "title_desc" ? "(Z→A)" : ""}</SelectItem>
             </SelectContent>
           </Select>
         </div>

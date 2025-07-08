@@ -1,0 +1,48 @@
+“Dossiers” spécialement conçue pour une consultante en finance. Elle doit me permettre de :
+1. Voir tous les clients ayant soumis un dossier de candidature à un appel à projet
+2. Accéder aux documents qu’ils ont téléversés
+3. Voir une **évaluation automatique de la faisabilité** de leur financement selon les documents fournis
+
+🎯 Objectif :
+Je dois pouvoir **préparer efficacement le dossier final à envoyer au bailleur de fonds**, donc je veux une **interface simple, claire, structurée**, sans surcharge visuelle.
+
+---
+
+📁 POUR CHAQUE DOSSIER (une ligne ou une carte) :
+- Nom de l'organisation ou du client
+- Nom de l’appel à projet concerné
+- Bouton “Voir les documents” → ouvre une pop-up ou une section déroulante avec :
+   - Liste des documents soumis (avec lien pour ouvrir ou télécharger)
+   - Indication automatique de ce qui manque (ex. : "Budget prévisionnel manquant ❌")
+- Score de faisabilité affiché visuellement :
+   - Score sur 100 ou 5 étoiles
+   - Phrase explicative courte : “Documents presque complets”, “Manque les statuts”, “Prêt pour soumission”, etc.
+- Bouton “Attribuer à un consultant” si je veux déléguer ce dossier en interne
+
+---
+
+📄 LISTE DES DOCUMENTS ATTENDUS (modifiable) :
+- Statuts juridiques
+- Budget prévisionnel
+- Plan d’affaires / Note de cadrage
+- Preuves de cofinancement (si exigé)
+- Relevé d’identité bancaire
+- Identité du représentant légal
+- Annexes techniques (si applicables)
+
+⚙️ Le système doit détecter si ces documents sont fournis ou non, et générer automatiquement un **rating de complétude/faisabilité** selon :
+- Nombre de documents soumis
+- Types de fichiers (PDF, Word, etc.)
+- Mots-clés dans les noms de fichiers si possible
+
+---
+
+🎨 DESIGN :
+- Interface épurée, en tableau ou en grille avec cartes
+- Icônes ou couleurs discrètes pour voir rapidement ce qui manque
+- Responsive sur mobile (affichage empilé)
+- Utilise Tailwind CSS ou Bootstrap pour un design propre et lisible
+
+🔒 Chaque dossier peut être cliquable pour voir plus de détails, mais **ne pas rediriger vers une autre page**, garde tout en pop-up ou section dynamique
+
+Merci de ne pas modifier le design général de la plateforme.

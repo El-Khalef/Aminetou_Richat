@@ -46,12 +46,10 @@ export function FundingCard({ opportunity, onOpenModal, viewMode = "grid" }: Fun
     return `${num}€`;
   };
 
-  const formatDate = (date: string | Date) => {
-    return new Date(date).toLocaleDateString("fr-FR", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
+  const formatDate = (date: string) => {
+    if (!date) return "Date non spécifiée";
+    // Retourner le texte tel quel sans formater comme une date
+    return date;
   };
 
   if (viewMode === "list") {

@@ -10,7 +10,10 @@ const filtersSchema = z.object({
   minAmount: z.coerce.number().optional(),
   maxAmount: z.coerce.number().optional(),
   status: z.string().optional(),
-  deadline: z.coerce.date().optional(),
+  deadline: z.string().optional(),
+  searchTerm: z.string().optional(),
+  fonds: z.string().optional(),
+  sortBy: z.string().optional(),
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {

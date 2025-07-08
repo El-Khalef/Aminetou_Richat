@@ -16,7 +16,7 @@ export const fundingOpportunities = pgTable("funding_opportunities", {
   eligibilityCriteria: text("eligibility_criteria").notNull(),
   requiredDocuments: text("required_documents").notNull(),
   externalLink: text("external_link"),
-  deadline: timestamp("deadline").notNull(),
+  deadline: text("deadline").notNull(),
   minAmount: integer("min_amount"),
   maxAmount: integer("max_amount"),
   fundingType: text("funding_type").notNull(), // Don, Subvention, Prêt, Mixte

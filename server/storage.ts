@@ -14,7 +14,10 @@ export interface IStorage {
     minAmount?: number;
     maxAmount?: number;
     status?: string;
-    deadline?: Date;
+    deadline?: string;
+    searchTerm?: string;
+    fonds?: string;
+    sortBy?: string;
   }): Promise<FundingOpportunity[]>;
   getFundingOpportunity(id: number): Promise<FundingOpportunity | undefined>;
   createFundingOpportunity(opportunity: InsertFundingOpportunity): Promise<FundingOpportunity>;
@@ -53,7 +56,10 @@ export class DatabaseStorage implements IStorage {
     minAmount?: number;
     maxAmount?: number;
     status?: string;
-    deadline?: Date;
+    deadline?: string;
+    searchTerm?: string;
+    fonds?: string;
+    sortBy?: string;
   }): Promise<FundingOpportunity[]> {
     const conditions: any[] = [];
     
@@ -78,16 +84,35 @@ export class DatabaseStorage implements IStorage {
     }
     
     if (filters?.deadline) {
-      conditions.push(lte(fundingOpportunities.deadline, filters.deadline));
+      conditions.push(sql`${fundingOpportunities.deadline} ILIKE ${'%' + filters.deadline + '%'}`);
     }
     
-    const baseQuery = db.select().from(fundingOpportunities);
+    // Filtre par terme de recherche
+    if (filters?.searchTerm) {
+      conditions.push(sql`${fundingOpportunities.title} ILIKE ${'%' + filters.searchTerm + '%'}`);
+    }
+    
+    // Filtre par fonds (funding_program)
+    if (filters?.fonds && filters.fonds !== 'all') {
+      conditions.push(sql`${fundingOpportunities.fundingProgram} ILIKE ${'%' + filters.fonds + '%'}`);
+    }
+    
+    let query = db.select().from(fundingOpportunities);
     
     if (conditions.length > 0) {
-      return await baseQuery.where(and(...conditions)).orderBy(desc(fundingOpportunities.createdAt));
+      query = query.where(and(...conditions));
     }
     
-    return await baseQuery.orderBy(desc(fundingOpportunities.createdAt));
+    // Tri
+    if (filters?.sortBy === 'title') {
+      return await query.orderBy(asc(fundingOpportunities.title));
+    } else if (filters?.sortBy === 'title_desc') {
+      return await query.orderBy(desc(fundingOpportunities.title));
+    } else if (filters?.sortBy === 'deadline') {
+      return await query.orderBy(asc(fundingOpportunities.deadline));
+    } else {
+      return await query.orderBy(desc(fundingOpportunities.createdAt));
+    }
   }
 
   async getFundingOpportunity(id: number): Promise<FundingOpportunity | undefined> {

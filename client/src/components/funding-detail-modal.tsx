@@ -27,11 +27,9 @@ export function FundingDetailModal({ opportunity, open, onClose }: FundingDetail
   };
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
+    if (!date) return "Date non spécifiée";
+    // Retourner le texte tel quel sans formater comme une date
+    return date;
   };
 
   const getStatusColor = (status: string) => {
